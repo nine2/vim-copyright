@@ -30,6 +30,40 @@ let g:file_copyright_auto_filetypes = ['sh', 'plx', 'pl', 'pm', 'py', 'python', 
 - use `:CopyrightAdd` to add copyright for your file.
 - use `:CopyrightUpdate` to update copyright.
 
+you can set comment_prefix map:
+
+```
+let g:file_copyright_comment_prefix_map  = {
+    \"python": "\#", "py":"\#",
+    \"cpp":"/*", "c":"/*", "h":"/*", "hpp":"/*",
+    \"go":"/*",
+    \"vim":"\"",
+    \"sh":"\#", "shell":"\#",
+\}
+
+let g:file_copyright_comment_mid_prefix_map = {
+    \"python": "\#", "py":"\#",
+    \"cpp":"\#", "c":"\#", "h":"\#", "hpp":"\#",
+    \"go":"\#",
+    \"vim":"\"",
+    \"sh":"\#", "shell":"\#",
+\}
+
+let g:file_copyright_comment_end_map = {
+    \"cpp":"*/", "c":"*/", "h":"*/", "hpp":"*/",
+    \"go":"*/",
+\
+```
+
+or set for filetype(default):
+
+```
+    let g:file_copyright_comment_prefix = "\#"
+    let g:file_copyright_comment_mid_prefix = "\#"
+    let g:file_copyright_comment_end = ""
+```
+
+
 ## Copyright
 
 - python file:

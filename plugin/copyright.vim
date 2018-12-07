@@ -21,6 +21,34 @@ if !exists('g:file_copyright_auto_filetypes')
     let g:file_copyright_auto_filetypes = [ ]
 endif
 
+if !exists('g:file_copyright_comment_prefix_map ')
+  let g:file_copyright_comment_prefix_map  = {
+        \"python": "\#", "py":"\#",
+        \"cpp":"/*", "c":"/*", "h":"/*", "hpp":"/*",
+        \"go":"/*",
+        \"vim":"\"",
+        \"sh":"\#", "shell":"\#",
+  \}
+endif
+
+if !exists('g:file_copyright_comment_mid_prefix_map')
+  let g:file_copyright_comment_mid_prefix_map = {
+        \"python": "\#", "py":"\#",
+        \"cpp":"\#", "c":"\#", "h":"\#", "hpp":"\#",
+        \"go":"\#",
+        \"vim":"\"",
+        \"sh":"\#", "shell":"\#",
+  \}
+endif
+
+if !exists('g:file_copyright_comment_end_map')
+  let g:file_copyright_comment_end_map = {
+        \"cpp":"*/", "c":"*/", "h":"*/", "hpp":"*/",
+        \"go":"*/",
+  \}
+endif
+
+
 function! MatchFileType()
     for ft in g:file_copyright_auto_filetypes
         if ft ==# &filetype | return 1 | endif
@@ -30,43 +58,67 @@ endfunction
 autocmd BufNewFile * if MatchFileType() | exec ":call <SID>AddTitle()" | endif
 
 
+function SetCommentFlag()
+  if !exists('g:file_copyright_comment_prefix')
+    let g:file_copyright_comment_prefix = "\#"
+    for item in keys(g:file_copyright_comment_prefix_map)
+      if item == &filetype
+        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map[&filetype]
+      endif
+    endfor
+  endif
+  if !exists('g:file_copyright_comment_mid_prefix')
+    let g:file_copyright_comment_mid_prefix = "\#"
+    for item in keys(g:file_copyright_comment_mid_prefix_map)
+      if item == &filetype
+        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map[&filetype]
+      endif
+    endfor
+  endif
+  if !exists('g:file_copyright_comment_end')
+    let g:file_copyright_comment_end = ""
+    for item in keys(g:file_copyright_comment_end_map)
+      if item == &filetype
+        let g:file_copyright_comment_end = g:file_copyright_comment_end_map[&filetype]
+      endif
+    endfor
+  endif
+endfunction
+
 function! <SID>SetComment(begin)
-    let l = 0
+    call SetCommentFlag()
+    let l = -1
     let cx= 0
     if &filetype == 'sh' || &filetype == "perl" || &filetype == "python"
-          let cx= 1
+        let l = 0
+        let cx= 1
     endif
     if &filetype == 'python'
       if a:begin isnot 0
         let l = 2
       endif
     endif
-    if cx == 0
-        call append(l + 1,"/* ====================================================")
-    else
-        call append(l + 1,"\# ====================================================")
-    endif
-    call append(l + 2, "\#   Copyright (C)".strftime("%Y")." All rights reserved.")
-    call append(l + 3, "#")
-    call append(l + 4, "\#   Author        : ".expand(g:file_copyright_name))
-    call append(l + 5, "\#   Email         : ".expand(g:file_copyright_email))
-    call append(l + 6, "\#   File Name     : ".expand("%:t"))
-    call append(l + 7, "\#   Last Modified : ".strftime("%Y-%m-%d %H:%M"))
-    call append(l + 8, "\#   Describe      :")
-    call append(l + 9, "\#")
-    if cx == 1
-        call append(l + 10, "\# ====================================================")
-    else
-        call append(l + 10, "\# ====================================================*/")
-    endif
+    call append(l + 1,      g:file_copyright_comment_prefix." ====================================================")
+    call append(l + 2,  g:file_copyright_comment_mid_prefix."   Copyright (C)".strftime("%Y")." All rights reserved.")
+    call append(l + 3,  g:file_copyright_comment_mid_prefix)
+    call append(l + 4,  g:file_copyright_comment_mid_prefix."   Author        : ".expand(g:file_copyright_name))
+    call append(l + 5,  g:file_copyright_comment_mid_prefix."   Email         : ".expand(g:file_copyright_email))
+    call append(l + 6,  g:file_copyright_comment_mid_prefix."   File Name     : ".expand("%:t"))
+    call append(l + 7,  g:file_copyright_comment_mid_prefix."   Last Modified : ".strftime("%Y-%m-%d %H:%M"))
+    call append(l + 8,  g:file_copyright_comment_mid_prefix."   Describe      :")
+    call append(l + 9,  g:file_copyright_comment_mid_prefix)
+    call append(l + 10, g:file_copyright_comment_mid_prefix." ====================================================".g:file_copyright_comment_end)
+    call append(l + 11, "")
 endfunction
 let s:file_copyright_head_end_line_no = 9
 
 function! <SID>AutoSetFileHead()
+    call SetCommentFlag()
     let n = 1
+    let regline = '^'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:\s*\S*.*$'
     while n < 15
         let line = getline(n)
-        if line =~'^#\s*\S*Last\sModified\s*:\s*\S*.*$'
+        if line =~ regline
             call <SID>UpdateTitle()
             return
         endif
@@ -76,8 +128,8 @@ function! <SID>AutoSetFileHead()
 endfunction
 
 function! <SID>UpdateTitle()
-    execute '/#\s*\S*Last\sModified\s*:/s@:.*$@\=strftime(": %Y-%m-%d %H:%M")@'
-    execute '/#\s*\S*File\sName\s*:/s@:.*$@\=": ".expand("%:t")@'
+    execute '/'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:/s@:.*$@\=strftime(": %Y-%m-%d %H:%M")@'
+    execute '/'.g:file_copyright_comment_mid_prefix.'\s*\S*File\sName\s*:/s@:.*$@\=": ".expand("%:t")@'
     execute "noh"
     echohl WarningMsg | echo "Successful in updating the copy right." | echohl None
 endfunction
