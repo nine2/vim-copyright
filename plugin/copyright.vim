@@ -207,7 +207,7 @@ endfunc
 
 
 func! Title_python()
-    call setline(1, "\#!/usr/bin/env python")
+    call setline(1, "\#!/usr/bin/env python3")
     call append(1, "\# encoding: utf-8")
     call append(2, "\# coding style: pep8")
     call <SID>SetComment(1)
