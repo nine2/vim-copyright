@@ -28,6 +28,7 @@ if !exists('g:file_copyright_comment_prefix_map ')
         \"go":"/*",
         \"vim":"\"",
         \"sh":"\#", "shell":"\#",
+        \"ruby":"\#", "rb":"\#", "rake":"\#",
   \}
 endif
 
@@ -38,6 +39,7 @@ if !exists('g:file_copyright_comment_mid_prefix_map')
         \"go":"\#",
         \"vim":"\"",
         \"sh":"\#", "shell":"\#",
+        \"ruby":"\#", "rb":"\#", "rake":"\#",
   \}
 endif
 
@@ -88,10 +90,8 @@ endfunction
 function! <SID>SetComment(begin)
     call SetCommentFlag()
     let l = -1
-    let cx= 0
-    if &filetype == 'sh' || &filetype == "perl" || &filetype == "python"
+    if &filetype == 'sh' || &filetype == "perl" || &filetype == "python" || &filetype == 'ruby' ||  &filetype == 'rb' || &filetype == 'rake'
         let l = 0
-        let cx= 1
     endif
     if &filetype == 'python'
       if a:begin isnot 0
@@ -143,6 +143,18 @@ function! <SID>AddTitle()
         let file_copyright_head_hase = 1
     endif
 
+    "ruby文件
+    if &filetype == 'ruby' || &filetype == 'rb' || &filetype == 'rake'
+        call Title_ruby()
+        let file_copyright_head_hase = 1
+    endif
+    "rake
+    if &filetype == 'rake'
+        call Title_file()
+        let file_copyright_head_hase = 1
+    endif
+
+
     "如果文件类型为perl文件
     if &filetype == 'perl'
         call Title_perl()
@@ -180,10 +192,12 @@ function! <SID>AddTitle()
         let file_copyright_head_hase = 1
     endif
 
+    " go 文件
     if &filetype == 'go'
         call Title_go()
         let file_copyright_head_hase = 1
     endif
+
 
     if file_copyright_head_hase is 0
         call Title_file()
@@ -197,6 +211,11 @@ endfunc
 " ##### 具体实现函数
 func! Title_sh()
     call setline(1, "\#!/bin/bash")
+    call <SID>SetComment(1)
+endfunc
+
+func! Title_ruby()
+    call setline(1, "\#!/usr/bin/ruby")
     call <SID>SetComment(1)
 endfunc
 
@@ -226,11 +245,15 @@ func! Title_h()
     " let l = 9
     let l = s:file_copyright_head_end_line_no
     call append(line(".") + l + 1, "")
-    call append(line(".") + l + 2, "\#ifndef  _".toupper(expand("%:t:r"))."_H")
-    call append(line(".") + l + 3, "\#define  _".toupper(expand("%:t:r"))."_H")
+    call append(line(".") + l + 2, "")
+    call append(line(".") + l + 3, "")
+    call setline(l + 3, "\#ifndef  _".toupper(expand("%:t:r"))."_H")
     call append(line(".") + l + 4, "")
+    call setline(l + 4, "\#define  _".toupper(expand("%:t:r"))."_H")
     call append(line(".") + l + 5, "")
-    call append(line(".") + l + 6, "\#endif // _".toupper(expand("%:t:r"))."_H")
+    call setline(l + 5, "")
+    call append(line(".") + l + 6, "")
+    call setline(l + 6, "\#endif // _".toupper(expand("%:t:r"))."_H")
 endfunc
 
 func! Title_c()
@@ -239,8 +262,9 @@ func! Title_c()
     let l = s:file_copyright_head_end_line_no
     echom l
     call append(line(".") + l + 1, "")
-    call append(line(".") + l + 2, "\#include <stdio.h>")
+    call append(line(".") + l + 2, "")
     call append(line(".") + l + 3, "")
+    call setline(l + 3, "\#include <stdio.h>")
     call append(line(".") + l + 4, "")
 endfunc
 
@@ -249,10 +273,13 @@ func! Title_cpp()
     " let l = 9
     let l = s:file_copyright_head_end_line_no
     call append(line(".") + l + 1, "")
-    call append(line(".") + l + 2, "\#include <iostream>")
-    call append(line(".") + l + 3, "using namespace std;")
+    call append(line(".") + l + 2, "")
+    call append(line(".") + l + 3, "")
+    call setline(l + 3, "\#include <iostream>")
     call append(line(".") + l + 4, "")
-    call append(line(".") + l + 6, "")
+    call setline(l + 4, "using namespace std;")
+    call append(line(".") + l + 5, "")
+    " call setline(l + 5, "\#include \"".expand("%:t:r").".h\"")
     "call append(line(".") + l + 5, "\#include \"".expand("%:t:r").".h\"")
 endfunc
 
