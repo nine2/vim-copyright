@@ -23,8 +23,20 @@ let g:file_copyright_email = "your email"
 
 add the config to auto add copyright to your file:
 
+Default:
 ```
-let g:file_copyright_auto_filetypes = ['sh', 'plx', 'pl', 'pm', 'py', 'python', 'h', 'hpp', 'c', 'cpp', 'java', 'ruby', 'rb', 'rake']
+let g:file_copyright_auto_filetypes = [
+        \ 'sh', 'plx', 'pl', 'pm', 'py', 'python',
+        \ 'h', 'hpp', 'c', 'cpp', 'java',
+        \ 'ruby', 'rb', 'rake',
+        \ 'uml', 'plantuml'
+]
+```
+custom filetype:
+```
+let g:file_copyright_auto_filetypes = [
+        \ 'py', 'python'
+]
 ```
 
 - use `:CopyrightAdd` to add copyright for your file.

@@ -17,8 +17,13 @@ if !exists('g:file_copyright_email')
 endif
 
 if !exists('g:file_copyright_auto_filetypes')
-    " let g:file_copyright_auto_filetypes = ['sh', 'plx', 'pl', 'pm', 'py', 'python', 'h', 'hpp', 'c', 'cpp', 'java']
-    let g:file_copyright_auto_filetypes = [ ]
+    let g:file_copyright_auto_filetypes = [
+          \ 'sh', 'plx', 'pl', 'pm', 'py', 'python',
+          \ 'h', 'hpp', 'c', 'cpp', 'java',
+          \ 'ruby', 'rb', 'rake',
+          \ 'uml', 'plantuml',
+        \]
+    " let g:file_copyright_auto_filetypes = [ ]
 endif
 
 if !exists('g:file_copyright_comment_prefix_map ')
@@ -198,6 +203,12 @@ function! <SID>AddTitle()
         let file_copyright_head_hase = 1
     endif
 
+    " uml 文件
+    let sub_uml = expand("%:e") == "uml" || expand("%:e") == "plantuml"
+    if &filetype == 'uml' || &filetype == 'plantuml' || sub_uml
+        call Title_uml()
+        let file_copyright_head_hase = 1
+    endif
 
     if file_copyright_head_hase is 0
         call Title_file()
@@ -290,6 +301,17 @@ func! Title_go()
     call append(line(".") + l + 2, "")
     call append(line(".") + l + 2, "import \"fmt\"")
 endfunc
+
+func! Title_uml()
+    " call <SID>SetComment(1)
+    " let l = s:file_copyright_head_end_line_no
+    call append(1, "")
+    call setline(1, "@startuml")
+    call append(2, "")
+    call setline(3, "@enduml")
+endfunc
+
+
 
 func! Title_file()
     call <SID>SetComment(1)
