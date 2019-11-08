@@ -307,8 +307,9 @@ func! Title_uml()
     " let l = s:file_copyright_head_end_line_no
     call append(1, "")
     call setline(1, "@startuml")
-    call append(2, "")
-    call setline(3, "@enduml")
+    call setline(2, "/' !includeurl https://raw.githubusercontent.com/xuanye/plantuml-style-c4/master/core.puml '/")
+    call setline(3, "")
+    call setline(4, "@enduml")
 endfunc
 
 
