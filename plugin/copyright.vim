@@ -34,6 +34,7 @@ if !exists('g:file_copyright_comment_prefix_map ')
         \"vim":"\"",
         \"sh":"\#", "shell":"\#",
         \"ruby":"\#", "rb":"\#", "rake":"\#",
+        \"uml":"/'", "plantuml":"/'",
   \}
 endif
 
@@ -45,6 +46,7 @@ if !exists('g:file_copyright_comment_mid_prefix_map')
         \"vim":"\"",
         \"sh":"\#", "shell":"\#",
         \"ruby":"\#", "rb":"\#", "rake":"\#",
+        \"uml":"'", "plantuml":"'",
   \}
 endif
 
@@ -52,6 +54,7 @@ if !exists('g:file_copyright_comment_end_map')
   let g:file_copyright_comment_end_map = {
         \"cpp":"*/", "c":"*/", "h":"*/", "hpp":"*/",
         \"go":"*/",
+        \"uml":"'/", "plantuml":"'/",
   \}
 endif
 
@@ -307,9 +310,9 @@ func! Title_uml()
     " let l = s:file_copyright_head_end_line_no
     call append(1, "")
     call setline(1, "@startuml")
-    call setline(2, "/' !includeurl https://raw.githubusercontent.com/xuanye/plantuml-style-c4/master/core.puml '/")
-    call setline(3, "")
-    call setline(4, "@enduml")
+    " call setline(2, "/' !includeurl https://raw.githubusercontent.com/xuanye/plantuml-style-c4/master/core.puml '/")
+    call setline(2, "")
+    call setline(3, "@enduml")
 endfunc
 
 
