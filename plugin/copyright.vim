@@ -37,36 +37,47 @@ if !exists('g:file_copyright_auto_filetypes')
     " let g:file_copyright_auto_filetypes = [ ]
 endif
 
-if !exists('g:file_copyright_comment_prefix_map ')
-  let g:file_copyright_comment_prefix_map  = {
-        \"python": "\#", "py":"\#",
-        \"cpp":"/*", "c":"/*", "h":"/*", "hpp":"/*",
-        \"go":"/*",
-        \"vim":"\"",
-        \"sh":"\#", "shell":"\#",
-        \"ruby":"\#", "rb":"\#", "rake":"\#",
-        \"uml":"/'", "plantuml":"/'",
-  \}
+if !exists('g:file_copyright_auto_filetypes_add')
+    let g:file_copyright_auto_filetypes_add = []
 endif
+
+
+let g:file_copyright_comment_prefix_map_default = {
+      \"python": "\#", "py":"\#",
+      \"cpp":"/*", "c":"/*", "h":"/*", "hpp":"/*",
+      \"go":"/*",
+      \"vim":"\"",
+      \"sh":"\#", "shell":"\#",
+      \"ruby":"\#", "rb":"\#", "rake":"\#",
+      \"uml":"/'", "plantuml":"/'",
+\}
+
+if !exists('g:file_copyright_comment_prefix_map')
+  let g:file_copyright_comment_prefix_map = {}
+endif
+
+let g:file_copyright_comment_mid_prefix_map_default = {
+      \"python": "\#", "py":"\#",
+      \"cpp":"\#", "c":"\#", "h":"\#", "hpp":"\#",
+      \"go":"\#",
+      \"vim":"\"",
+      \"sh":"\#", "shell":"\#",
+      \"ruby":"\#", "rb":"\#", "rake":"\#",
+      \"uml":"'", "plantuml":"'",
+\}
 
 if !exists('g:file_copyright_comment_mid_prefix_map')
-  let g:file_copyright_comment_mid_prefix_map = {
-        \"python": "\#", "py":"\#",
-        \"cpp":"\#", "c":"\#", "h":"\#", "hpp":"\#",
-        \"go":"\#",
-        \"vim":"\"",
-        \"sh":"\#", "shell":"\#",
-        \"ruby":"\#", "rb":"\#", "rake":"\#",
-        \"uml":"'", "plantuml":"'",
-  \}
+  let g:file_copyright_comment_mid_prefix_map = {}
 endif
 
+let g:file_copyright_comment_end_map_default = {
+      \"cpp":"*/", "c":"*/", "h":"*/", "hpp":"*/",
+      \"go":"*/",
+      \"uml":"'/", "plantuml":"'/",
+\}
+
 if !exists('g:file_copyright_comment_end_map')
-  let g:file_copyright_comment_end_map = {
-        \"cpp":"*/", "c":"*/", "h":"*/", "hpp":"*/",
-        \"go":"*/",
-        \"uml":"'/", "plantuml":"'/",
-  \}
+  let g:file_copyright_comment_end_map = {}
 endif
 
 
@@ -74,6 +85,11 @@ function! MatchFileType()
     for ft in g:file_copyright_auto_filetypes
         if ft ==# &filetype | return 1 | endif
     endfor
+
+    for ft in g:file_copyright_auto_filetypes_add
+        if ft ==# &filetype | return 1 | endif
+    endfor
+
     return 0
 endfunction
 autocmd BufNewFile * if MatchFileType() | exec ":call <SID>AddTitle()" | endif
@@ -82,22 +98,39 @@ autocmd BufNewFile * if MatchFileType() | exec ":call <SID>AddTitle()" | endif
 function SetCommentFlag()
   if !exists('g:file_copyright_comment_prefix')
     let g:file_copyright_comment_prefix = "\#"
+    for item in keys(g:file_copyright_comment_prefix_map_default)
+      if item == &filetype
+        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map_default[&filetype]
+      endif
+    endfor
     for item in keys(g:file_copyright_comment_prefix_map)
       if item == &filetype
         let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map[&filetype]
       endif
     endfor
   endif
+
   if !exists('g:file_copyright_comment_mid_prefix')
     let g:file_copyright_comment_mid_prefix = "\#"
+    for item in keys(g:file_copyright_comment_mid_prefix_map_default)
+      if item == &filetype
+        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map_default[&filetype]
+      endif
+    endfor
     for item in keys(g:file_copyright_comment_mid_prefix_map)
       if item == &filetype
         let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map[&filetype]
       endif
     endfor
   endif
+
   if !exists('g:file_copyright_comment_end')
     let g:file_copyright_comment_end = ""
+    for item in keys(g:file_copyright_comment_end_map_default)
+      if item == &filetype
+        let g:file_copyright_comment_end = g:file_copyright_comment_end_map_default[&filetype]
+      endif
+    endfor
     for item in keys(g:file_copyright_comment_end_map)
       if item == &filetype
         let g:file_copyright_comment_end = g:file_copyright_comment_end_map[&filetype]
