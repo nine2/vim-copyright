@@ -21,6 +21,9 @@ let g:file_copyright_company = "your company, default: null"
 let g:file_copyright_rights = "custom_rights, default:'All rights reserved.'"
 let g:file_copyright_name = "your name"
 let g:file_copyright_email = "your email"
+
+" auto update copyright when save file. Default: 1; 0:close auto.
+let g:file_copyright_auto_update = 1
 ```
 
 ### HotKey
@@ -90,7 +93,7 @@ or set for filetype(default):
 
 ```
 # ====================================================
-#   Copyright (C)2018 All rights reserved.
+#   Copyright (C) 2018 All rights reserved.
 #
 #   Author        : your name
 #   Email         : your email
@@ -105,7 +108,7 @@ or set for filetype(default):
 
 ```
 /* ====================================================
-#   Copyright (C)2018 All rights reserved.
+#   Copyright (C) 2018 All rights reserved.
 #
 #   Author        : your name
 #   Email         : your email

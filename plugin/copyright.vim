@@ -19,8 +19,13 @@ if !exists('g:file_copyright_company')
   let g:file_copyright_company = ""
 endif
 if !exists('g:file_copyright_rights')
-  let g:file_copyright_email = "All rights reserved."
+  let g:file_copyright_rights = "All rights reserved."
 endif
+
+if !exists('g:file_copyright_auto_update')
+  let g:file_copyright_auto_update = 1
+endif
+
 
 if !exists('g:file_copyright_auto_filetypes')
     let g:file_copyright_auto_filetypes = [
@@ -113,7 +118,7 @@ function! <SID>SetComment(begin)
       endif
     endif
     call append(l + 1,      g:file_copyright_comment_prefix." ====================================================")
-    call append(l + 2,  g:file_copyright_comment_mid_prefix."   Copyright (C)".strftime("%Y")." ".expand(g:file_copyright_company)." ".expand(g:file_copyright_rights))
+    call append(l + 2,  g:file_copyright_comment_mid_prefix."   Copyright (C) ".strftime("%Y")." ".expand(g:file_copyright_company)." ".expand(g:file_copyright_rights))
     call append(l + 3,  g:file_copyright_comment_mid_prefix)
     call append(l + 4,  g:file_copyright_comment_mid_prefix."   Author        : ".expand(g:file_copyright_name))
     call append(l + 5,  g:file_copyright_comment_mid_prefix."   Email         : ".expand(g:file_copyright_email))
@@ -126,7 +131,7 @@ function! <SID>SetComment(begin)
 endfunction
 let s:file_copyright_head_end_line_no = 9
 
-function! <SID>AutoSetFileHead()
+function! <SID>UpdateFileHead(add)
     call SetCommentFlag()
     let n = 1
     let regline = '^'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:\s*\S*.*$'
@@ -138,7 +143,14 @@ function! <SID>AutoSetFileHead()
         endif
         let n = n + 1
     endwhile
-    call <SID>SetComment(0)
+
+    if a:add isnot 0
+      call <SID>SetComment(0)
+    endif
+endfunction
+
+function! <SID>AutoSetFileHead()
+    call <SID>UpdateFileHead(1)
 endfunction
 
 function! <SID>UpdateTitle()
@@ -331,11 +343,16 @@ func! Title_file()
 endfunc
 
 
+func! <SID>AutoUpdate()
+  if exists('g:file_copyright_auto_update') && g:file_copyright_auto_update == 1
+    call <SID>UpdateFileHead(0)
+  endif
+endfunc
+au BufWritePre * call <SID>AutoUpdate()
 
 """"""""""""""""""""""""""
 " Shortcuts...
 """"""""""""""""""""""""""
 command! -nargs=0 CopyrightAdd :call <SID>AutoSetFileHead()
 command! -nargs=0 CopyrightUpdate :call <SID>AutoSetFileHead()
-
 " vim:set ft=vim sw=2 sts=2  fdm=marker et:
