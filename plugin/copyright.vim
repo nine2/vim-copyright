@@ -15,6 +15,12 @@ endif
 if !exists('g:file_copyright_email')
   let g:file_copyright_email = "在 vimrc 文件中添加 let g:file_copyright_email = 'your email'"
 endif
+if !exists('g:file_copyright_company')
+  let g:file_copyright_company = ""
+endif
+if !exists('g:file_copyright_rights')
+  let g:file_copyright_email = "All rights reserved."
+endif
 
 if !exists('g:file_copyright_auto_filetypes')
     let g:file_copyright_auto_filetypes = [
@@ -107,7 +113,7 @@ function! <SID>SetComment(begin)
       endif
     endif
     call append(l + 1,      g:file_copyright_comment_prefix." ====================================================")
-    call append(l + 2,  g:file_copyright_comment_mid_prefix."   Copyright (C)".strftime("%Y")." All rights reserved.")
+    call append(l + 2,  g:file_copyright_comment_mid_prefix."   Copyright (C)".strftime("%Y")." ".expand(g:file_copyright_company)." ".expand(g:file_copyright_rights))
     call append(l + 3,  g:file_copyright_comment_mid_prefix)
     call append(l + 4,  g:file_copyright_comment_mid_prefix."   Author        : ".expand(g:file_copyright_name))
     call append(l + 5,  g:file_copyright_comment_mid_prefix."   Email         : ".expand(g:file_copyright_email))

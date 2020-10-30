@@ -17,9 +17,19 @@ Bundle "nine2/vim-copyright"
 add the config to your .vimrc to set your name / email :
 
 ```
+let g:file_copyright_company = "your company, default: null"
+let g:file_copyright_rights = "custom_rights, default:'All rights reserved.'"
 let g:file_copyright_name = "your name"
 let g:file_copyright_email = "your email"
 ```
+
+### HotKey
+
+- use `:CopyrightAdd` to add copyright for your file.
+- use `:CopyrightUpdate` to update copyright.
+- use `nmap uh :CopyrightUpdate<cr>` to your .vimrc file as hotkey.
+
+### CustomConfig
 
 add the config to auto add copyright to your file:
 
@@ -32,15 +42,13 @@ let g:file_copyright_auto_filetypes = [
         \ 'uml', 'plantuml'
 ]
 ```
+
 custom filetype:
 ```
 let g:file_copyright_auto_filetypes = [
         \ 'py', 'python'
 ]
 ```
-
-- use `:CopyrightAdd` to add copyright for your file.
-- use `:CopyrightUpdate` to update copyright.
 
 you can set comment_prefix map:
 
@@ -76,7 +84,7 @@ or set for filetype(default):
 ```
 
 
-## Copyright
+## Copyright.eg
 
 - python file:
 
