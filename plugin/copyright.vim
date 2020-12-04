@@ -165,6 +165,9 @@ endfunction
 let s:file_copyright_head_end_line_no = 9
 
 function! <SID>UpdateFileHead(add)
+    let curline = line(".")
+    let curcol = col(".")
+    " echom "AutoSetFileHead" | echo curline | echo curcol
     call SetCommentFlag()
     let n = 1
     let regline = '^'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:\s*\S*.*$'
@@ -172,6 +175,7 @@ function! <SID>UpdateFileHead(add)
         let line = getline(n)
         if line =~ regline
             call <SID>UpdateTitle()
+            call cursor(curline, curcol)
             return
         endif
         let n = n + 1
