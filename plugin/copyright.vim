@@ -1,7 +1,15 @@
-" Vim plugin to change the working directory to the project root.
+" ====================================================
+"   Copyright (C) 2021  All rights reserved.
 "
-" Copyright 2018-2018 bbxytl, <bbxytl@gmail.com>
-" Released under the MIT licence.
+"   Author        : bbxytl
+"   Email         : bbxytl@gmail.com
+"   File Name     : copyright.vim
+"   Last Modified : 2021-02-09 10:41
+"   Describe      : Released under the MIT licence.
+"       Add and update Copyright messag, eg. file name, last modified
+"
+" ====================================================
+
 
 if exists('g:loaded_file_copyright') || &cp
   finish
@@ -33,6 +41,7 @@ if !exists('g:file_copyright_auto_filetypes')
           \ 'h', 'hpp', 'c', 'cpp', 'java',
           \ 'ruby', 'rb', 'rake',
           \ 'uml', 'plantuml',
+          \ 'go',
         \]
     " let g:file_copyright_auto_filetypes = [ ]
 endif
@@ -191,8 +200,8 @@ function! <SID>AutoSetFileHead()
 endfunction
 
 function! <SID>UpdateTitle()
-    execute '/'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:/s@:.*$@\=strftime(": %Y-%m-%d %H:%M")@'
-    execute '/'.g:file_copyright_comment_mid_prefix.'\s*\S*File\sName\s*:/s@:.*$@\=": ".expand("%:t")@'
+    execute '/^'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:/s@:.*$@\=strftime(": %Y-%m-%d %H:%M")@'
+    execute '/^'.g:file_copyright_comment_mid_prefix.'\s*\S*File\sName\s*:/s@:.*$@\=": ".expand("%:t")@'
     execute "noh"
     echohl WarningMsg | echo "Successful in updating the copy right." | echohl None
 endfunction

@@ -43,6 +43,7 @@ let g:file_copyright_auto_filetypes = [
         \ 'h', 'hpp', 'c', 'cpp', 'java',
         \ 'ruby', 'rb', 'rake',
         \ 'uml', 'plantuml'
+        \ 'go',
 ]
 ```
 
