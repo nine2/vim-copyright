@@ -4,7 +4,7 @@
 "   Author        : bbxytl
 "   Email         : bbxytl@gmail.com
 "   File Name     : copyright.vim
-"   Last Modified : 2023-08-03 21:57
+"   Last Modified : 2023-08-04 02:22
 "   Describe      : Released under the MIT licence.
 "       Add and update Copyright messag, eg. file name, last modified
 "
@@ -55,28 +55,30 @@ let g:file_copyright_comment_prefix_map_default = {
       \"python": "\#", "py":"\#",
       \"cpp":"/*", "c":"/*", "h":"/*", "hpp":"/*",
       \"go":"/*",
-      \"vim":"\"",
+      \"vim":"\"", "vim9script": "\#",
       \"sh":"\#", "shell":"\#",
       \"ruby":"\#", "rb":"\#", "rake":"\#",
       \"uml":"/'", "plantuml":"/'",
 \}
 
 if !exists('g:file_copyright_comment_prefix_map')
-  let g:file_copyright_comment_prefix_map = {}
+  let _comment = getline(1) == "vim9script" ? "\#": "\""
+  let g:file_copyright_comment_prefix_map = {"vim": _comment}
 endif
 
 let g:file_copyright_comment_mid_prefix_map_default = {
       \"python": "\#", "py":"\#",
       \"cpp":"\#", "c":"\#", "h":"\#", "hpp":"\#",
       \"go":"\#",
-      \"vim":"\"",
+      \"vim":"\"", "vim9script": "\#",
       \"sh":"\#", "shell":"\#",
       \"ruby":"\#", "rb":"\#", "rake":"\#",
       \"uml":"'", "plantuml":"'",
 \}
 
 if !exists('g:file_copyright_comment_mid_prefix_map')
-  let g:file_copyright_comment_mid_prefix_map = {}
+  let _comment = getline(1) == "vim9script" ? "\#": "\""
+  let g:file_copyright_comment_mid_prefix_map = {"vim": _comment}
 endif
 
 let g:file_copyright_comment_end_map_default = {
@@ -151,9 +153,12 @@ endfunction
 function! <SID>SetComment(begin)
     call SetCommentFlag()
     let l = -1
-    if &filetype == 'sh' || &filetype == "perl" || &filetype == "python" || &filetype == 'ruby' ||  &filetype == 'rb' || &filetype == 'rake'
+    for ftype in ['sh', 'perl', 'python', 'ruby', 'rb', 'rake', 'vim']
+      if &filetype == ftype
         let l = 0
-    endif
+      endif
+    endfor
+
     if &filetype == 'python'
       if a:begin isnot 0
         let l = 2
@@ -180,15 +185,14 @@ function! <SID>UpdateFileHead(add)
     call SetCommentFlag()
     let n = 1
     let regline = '^'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:\s*\S*.*$'
-    while n < 15
-        let line = getline(n)
-        if line =~ regline
-            call <SID>UpdateTitle()
-            call cursor(curline, curcol)
-            return
-        endif
-        let n = n + 1
-    endwhile
+    for n in range(1,14)
+      let line = getline(n)
+      if line =~ regline
+        call <SID>UpdateTitle()
+        call cursor(curline, curcol)
+        return
+      endif
+    endfor
 
     if a:add isnot 0
       call <SID>SetComment(0)
@@ -293,16 +297,20 @@ endfunc
 
 " ##### 具体实现函数
 func! Title_vim()
-  if getline(1) == 'vim9script'
-    let g:file_copyright_comment_prefix = '\#'
+  let choice = confirm("create a vim9script script?", "&y\n&n\n")
+  if choice == 1
+    cal setline(1, "vim9script")
+    let g:file_copyright_comment_prefix = "\#"
+    let g:file_copyright_comment_mid_prefix = "\#"
     call <SID>SetComment(1)
+
   else
     call <SID>SetComment(0)
   endif
 endfunc
 
 func! Title_sh()
-    call setline(1, "\#!/bin/bash")
+    call setline(1, "\#!/usr/bin/env bash")
     call <SID>SetComment(1)
 endfunc
 
