@@ -4,7 +4,7 @@
 "   Author        : bbxytl
 "   Email         : bbxytl@gmail.com
 "   File Name     : copyright.vim
-"   Last Modified : 2021-02-09 10:41
+"   Last Modified : 2023-08-03 21:57
 "   Describe      : Released under the MIT licence.
 "       Add and update Copyright messag, eg. file name, last modified
 "
@@ -209,7 +209,12 @@ endfunction
 " ##### 不同文件添加不同头总调用函数
 function! <SID>AddTitle()
     let file_copyright_head_hase = 0
-    "如果文件类型为.sh文件
+    "如果文件类型为.vim文件
+    if &filetype == 'vim'
+        call Title_vim()
+        let file_copyright_head_hase = 1
+    endif
+
     if &filetype == 'sh'
         call Title_sh()
         let file_copyright_head_hase = 1
@@ -287,6 +292,15 @@ function! <SID>AddTitle()
 endfunc
 
 " ##### 具体实现函数
+func! Title_vim()
+  if getline(1) == 'vim9script'
+    let g:file_copyright_comment_prefix = '\#'
+    call <SID>SetComment(1)
+  else
+    call <SID>SetComment(0)
+  endif
+endfunc
+
 func! Title_sh()
     call setline(1, "\#!/bin/bash")
     call <SID>SetComment(1)
