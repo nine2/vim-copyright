@@ -4,7 +4,7 @@
 "   Author        : bbxytl
 "   Email         : bbxytl@gmail.com
 "   File Name     : copyright.vim
-"   Last Modified : 2023-08-04 10:59
+"   Last Modified : 2023-08-04 17:54
 "   Describe      : Released under the MIT licence.
 "       Add and update Copyright messag, eg. file name, last modified
 "
@@ -41,7 +41,7 @@ if !exists('g:file_copyright_auto_filetypes')
           \ 'h', 'hpp', 'c', 'cpp', 'java',
           \ 'ruby', 'rb', 'rake',
           \ 'uml', 'plantuml',
-          \ 'go',
+          \ 'go', 'vim',
         \]
     " let g:file_copyright_auto_filetypes = [ ]
 endif
@@ -62,8 +62,7 @@ let g:file_copyright_comment_prefix_map_default = {
 \}
 
 if !exists('g:file_copyright_comment_prefix_map')
-  let __comment = getline(1) =~# "^vim9script" ? "\#": "\""
-  let g:file_copyright_comment_prefix_map = {"vim": __comment}
+  let g:file_copyright_comment_prefix_map = {} 
 endif
 
 let g:file_copyright_comment_mid_prefix_map_default = {
@@ -77,8 +76,7 @@ let g:file_copyright_comment_mid_prefix_map_default = {
 \}
 
 if !exists('g:file_copyright_comment_mid_prefix_map')
-  let __comment = getline(1) =~# "^vim9script" ? "\#": "\""
-  let g:file_copyright_comment_mid_prefix_map = {"vim": __comment}
+  let g:file_copyright_comment_mid_prefix_map = {}
 endif
 
 let g:file_copyright_comment_end_map_default = {
@@ -106,17 +104,31 @@ endfunction
 autocmd BufNewFile * if MatchFileType() | exec ":call <SID>AddTitle()" | endif
 
 
+" this function transform filetype: one filetype to many format.
+" parm: &filetype
+" return a string which key in file_copyright_comment_xxxx_map or other string
+
+function TransformFileType(ftype)
+  if a:ftype == "vim"
+    " return a key in file_copyright_comment_prefix_map_default
+    return getline(1) =~# "^vim9script" ? "vim9script": "vim"
+  else
+    return a:ftype
+  endif
+endfunction
+
 function SetCommentFlag()
+  let tftype =TransformFileType(&filetype)
   if !exists('g:file_copyright_comment_prefix')
     let g:file_copyright_comment_prefix = "\#"
     for item in keys(g:file_copyright_comment_prefix_map_default)
-      if item == &filetype
-        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map_default[&filetype]
+      if item == tftype
+        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map_default[tftype]
       endif
     endfor
     for item in keys(g:file_copyright_comment_prefix_map)
-      if item == &filetype
-        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map[&filetype]
+      if item == tftype
+        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map[tftype]
       endif
     endfor
   endif
@@ -124,13 +136,13 @@ function SetCommentFlag()
   if !exists('g:file_copyright_comment_mid_prefix')
     let g:file_copyright_comment_mid_prefix = "\#"
     for item in keys(g:file_copyright_comment_mid_prefix_map_default)
-      if item == &filetype
-        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map_default[&filetype]
+      if item == tftype
+        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map_default[tftype]
       endif
     endfor
     for item in keys(g:file_copyright_comment_mid_prefix_map)
-      if item == &filetype
-        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map[&filetype]
+      if item == tftype
+        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map[tftype]
       endif
     endfor
   endif
@@ -138,13 +150,13 @@ function SetCommentFlag()
   if !exists('g:file_copyright_comment_end')
     let g:file_copyright_comment_end = ""
     for item in keys(g:file_copyright_comment_end_map_default)
-      if item == &filetype
-        let g:file_copyright_comment_end = g:file_copyright_comment_end_map_default[&filetype]
+      if item == tftype
+        let g:file_copyright_comment_end = g:file_copyright_comment_end_map_default[tftype]
       endif
     endfor
     for item in keys(g:file_copyright_comment_end_map)
-      if item == &filetype
-        let g:file_copyright_comment_end = g:file_copyright_comment_end_map[&filetype]
+      if item == tftype
+        let g:file_copyright_comment_end = g:file_copyright_comment_end_map[tftype]
       endif
     endfor
   endif
