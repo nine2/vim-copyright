@@ -4,7 +4,7 @@
 "   Author        : bbxytl
 "   Email         : bbxytl@gmail.com
 "   File Name     : copyright.vim
-"   Last Modified : 2023-08-04 02:22
+"   Last Modified : 2023-08-04 10:26
 "   Describe      : Released under the MIT licence.
 "       Add and update Copyright messag, eg. file name, last modified
 "
@@ -156,6 +156,7 @@ function! <SID>SetComment(begin)
     for ftype in ['sh', 'perl', 'python', 'ruby', 'rb', 'rake', 'vim']
       if &filetype == ftype
         let l = 0
+        break
       endif
     endfor
 
