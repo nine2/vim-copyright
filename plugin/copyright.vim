@@ -4,7 +4,7 @@
 "   Author        : bbxytl
 "   Email         : bbxytl@gmail.com
 "   File Name     : copyright.vim
-"   Last Modified : 2023-08-04 10:26
+"   Last Modified : 2023-08-04 10:59
 "   Describe      : Released under the MIT licence.
 "       Add and update Copyright messag, eg. file name, last modified
 "
@@ -62,8 +62,8 @@ let g:file_copyright_comment_prefix_map_default = {
 \}
 
 if !exists('g:file_copyright_comment_prefix_map')
-  let _comment = getline(1) == "vim9script" ? "\#": "\""
-  let g:file_copyright_comment_prefix_map = {"vim": _comment}
+  let __comment = getline(1) =~# "^vim9script" ? "\#": "\""
+  let g:file_copyright_comment_prefix_map = {"vim": __comment}
 endif
 
 let g:file_copyright_comment_mid_prefix_map_default = {
@@ -77,8 +77,8 @@ let g:file_copyright_comment_mid_prefix_map_default = {
 \}
 
 if !exists('g:file_copyright_comment_mid_prefix_map')
-  let _comment = getline(1) == "vim9script" ? "\#": "\""
-  let g:file_copyright_comment_mid_prefix_map = {"vim": _comment}
+  let __comment = getline(1) =~# "^vim9script" ? "\#": "\""
+  let g:file_copyright_comment_mid_prefix_map = {"vim": __comment}
 endif
 
 let g:file_copyright_comment_end_map_default = {
