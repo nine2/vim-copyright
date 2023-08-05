@@ -4,7 +4,7 @@
 "   Author        : bbxytl
 "   Email         : bbxytl@gmail.com
 "   File Name     : copyright.vim
-"   Last Modified : 2023-08-05 00:46
+"   Last Modified : 2023-08-05 17:26
 "   Describe      : Released under the MIT licence.
 "       Add and update Copyright messag, eg. file name, last modified
 "
@@ -118,20 +118,28 @@ function TransformFileType(ftype)
 endfunction
 
 function SetCommentFlag()
-  let tftype =TransformFileType(&filetype)
+  let l:tftype = TransformFileType(&filetype)
+
+  let l:prefix_default = g:file_copyright_comment_prefix_map_default
+  let l:prefix = g:file_copyright_comment_prefix_map
+  let l:mid_prefix_default = g:file_copyright_comment_mid_prefix_map_default
+  let l:mid_prefix = g:file_copyright_comment_mid_prefix_map
+  let l:end_prefix_default = g:file_copyright_comment_end_map_default
+  let l:end_prefix = g:file_copyright_comment_end_map
+
   if !exists('g:file_copyright_comment_prefix')
-    let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map_default->get(tftype) ?? "\#"
-    let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map->get(tftype) ?? g:file_copyright_comment_prefix
+    let g:file_copyright_comment_prefix = l:prefix_default->get(l:tftype) == 0 ? l:prefix_default->get(l:tftype) : "\#"
+    let g:file_copyright_comment_prefix = l:prefix->get(l:tftype) == 0 ? l:prefix->get(l:tftype) : g:file_copyright_comment_prefix
   endif
 
   if !exists('g:file_copyright_comment_mid_prefix')
-    let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map_default->get(tftype) ?? "\#"
-    let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map->get(tftype) ?? g:file_copyright_comment_mid_prefix
+    let g:file_copyright_comment_mid_prefix = l:mid_prefix_default->get(l:tftype) == 0 ? l:mid_prefix_default->get(l:tftype) : "\#"
+    let g:file_copyright_comment_mid_prefix = l:mid_prefix->get(l:tftype) == 0 ? l:mid_prefix->get(l:tftype) : g:file_copyright_comment_mid_prefix
   endif
 
   if !exists('g:file_copyright_comment_end')
-    let g:file_copyright_comment_end = g:file_copyright_comment_end_map_default->get(tftype) ?? ""
-    let g:file_copyright_comment_end = g:file_copyright_comment_end_map->get(tftype) ?? g:file_copyright_comment_end
+    let g:file_copyright_comment_end = l:end_prefix_default->get(l:tftype) == 0 ? l:end_prefix_default->get(l:tftype) : ""
+    let g:file_copyright_comment_end = l:end_prefix->get(l:tftype) == 0 ? l:end_prefix->get(l:tftype) : g:file_copyright_comment_end
   endif
 endfunction
 
