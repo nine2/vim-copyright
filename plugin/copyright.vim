@@ -4,7 +4,7 @@
 "   Author        : bbxytl
 "   Email         : bbxytl@gmail.com
 "   File Name     : copyright.vim
-"   Last Modified : 2021-02-09 10:41
+"   Last Modified : 2023-08-05 19:21
 "   Describe      : Released under the MIT licence.
 "       Add and update Copyright messag, eg. file name, last modified
 "
@@ -41,7 +41,7 @@ if !exists('g:file_copyright_auto_filetypes')
           \ 'h', 'hpp', 'c', 'cpp', 'java',
           \ 'ruby', 'rb', 'rake',
           \ 'uml', 'plantuml',
-          \ 'go',
+          \ 'go', 'vim',
         \]
     " let g:file_copyright_auto_filetypes = [ ]
 endif
@@ -55,21 +55,21 @@ let g:file_copyright_comment_prefix_map_default = {
       \"python": "\#", "py":"\#",
       \"cpp":"/*", "c":"/*", "h":"/*", "hpp":"/*",
       \"go":"/*",
-      \"vim":"\"",
+      \"vim":"\"", "vim9script": "\#",
       \"sh":"\#", "shell":"\#",
       \"ruby":"\#", "rb":"\#", "rake":"\#",
       \"uml":"/'", "plantuml":"/'",
 \}
 
 if !exists('g:file_copyright_comment_prefix_map')
-  let g:file_copyright_comment_prefix_map = {}
+  let g:file_copyright_comment_prefix_map = {} 
 endif
 
 let g:file_copyright_comment_mid_prefix_map_default = {
       \"python": "\#", "py":"\#",
       \"cpp":"\#", "c":"\#", "h":"\#", "hpp":"\#",
       \"go":"\#",
-      \"vim":"\"",
+      \"vim":"\"", "vim9script": "\#",
       \"sh":"\#", "shell":"\#",
       \"ruby":"\#", "rb":"\#", "rake":"\#",
       \"uml":"'", "plantuml":"'",
@@ -104,56 +104,55 @@ endfunction
 autocmd BufNewFile * if MatchFileType() | exec ":call <SID>AddTitle()" | endif
 
 
+" this function transform filetype: one filetype to many format.
+" parm: &filetype
+" return a string which key in file_copyright_comment_xxxx_map or other string
+
+function TransformFileType(ftype)
+  if a:ftype == "vim"
+    " return a key in file_copyright_comment_prefix_map_default
+    return getline(1) =~# "^vim9script" ? "vim9script": "vim"
+  else
+    return a:ftype
+  endif
+endfunction
+
 function SetCommentFlag()
+  let l:tftype = TransformFileType(&filetype)
+
+  let l:prefix_default = g:file_copyright_comment_prefix_map_default
+  let l:prefix = g:file_copyright_comment_prefix_map
+  let l:mid_prefix_default = g:file_copyright_comment_mid_prefix_map_default
+  let l:mid_prefix = g:file_copyright_comment_mid_prefix_map
+  let l:end_prefix_default = g:file_copyright_comment_end_map_default
+  let l:end_prefix = g:file_copyright_comment_end_map
+
   if !exists('g:file_copyright_comment_prefix')
-    let g:file_copyright_comment_prefix = "\#"
-    for item in keys(g:file_copyright_comment_prefix_map_default)
-      if item == &filetype
-        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map_default[&filetype]
-      endif
-    endfor
-    for item in keys(g:file_copyright_comment_prefix_map)
-      if item == &filetype
-        let g:file_copyright_comment_prefix = g:file_copyright_comment_prefix_map[&filetype]
-      endif
-    endfor
+    let g:file_copyright_comment_prefix = l:prefix_default->get(l:tftype) isnot 0 ? l:prefix_default->get(l:tftype) : "\#"
+    let g:file_copyright_comment_prefix = l:prefix->get(l:tftype) isnot 0 ? l:prefix->get(l:tftype) : g:file_copyright_comment_prefix
   endif
 
   if !exists('g:file_copyright_comment_mid_prefix')
-    let g:file_copyright_comment_mid_prefix = "\#"
-    for item in keys(g:file_copyright_comment_mid_prefix_map_default)
-      if item == &filetype
-        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map_default[&filetype]
-      endif
-    endfor
-    for item in keys(g:file_copyright_comment_mid_prefix_map)
-      if item == &filetype
-        let g:file_copyright_comment_mid_prefix = g:file_copyright_comment_mid_prefix_map[&filetype]
-      endif
-    endfor
+    let g:file_copyright_comment_mid_prefix = l:mid_prefix_default->get(l:tftype) isnot 0 ? l:mid_prefix_default->get(l:tftype) : "\#"
+    let g:file_copyright_comment_mid_prefix = l:mid_prefix->get(l:tftype) isnot 0 ? l:mid_prefix->get(l:tftype) : g:file_copyright_comment_mid_prefix
   endif
 
   if !exists('g:file_copyright_comment_end')
-    let g:file_copyright_comment_end = ""
-    for item in keys(g:file_copyright_comment_end_map_default)
-      if item == &filetype
-        let g:file_copyright_comment_end = g:file_copyright_comment_end_map_default[&filetype]
-      endif
-    endfor
-    for item in keys(g:file_copyright_comment_end_map)
-      if item == &filetype
-        let g:file_copyright_comment_end = g:file_copyright_comment_end_map[&filetype]
-      endif
-    endfor
+    let g:file_copyright_comment_end = l:end_prefix_default->get(l:tftype) isnot 0 ? l:end_prefix_default->get(l:tftype) : ""
+    let g:file_copyright_comment_end = l:end_prefix->get(l:tftype) isnot 0 ? l:end_prefix->get(l:tftype) : g:file_copyright_comment_end
   endif
 endfunction
 
 function! <SID>SetComment(begin)
     call SetCommentFlag()
     let l = -1
-    if &filetype == 'sh' || &filetype == "perl" || &filetype == "python" || &filetype == 'ruby' ||  &filetype == 'rb' || &filetype == 'rake'
+    for ftype in ['sh', 'perl', 'python', 'ruby', 'rb', 'rake', 'vim']
+      if &filetype == ftype
         let l = 0
-    endif
+        break
+      endif
+    endfor
+
     if &filetype == 'python'
       if a:begin isnot 0
         let l = 2
@@ -180,15 +179,14 @@ function! <SID>UpdateFileHead(add)
     call SetCommentFlag()
     let n = 1
     let regline = '^'.g:file_copyright_comment_mid_prefix.'\s*\S*Last\sModified\s*:\s*\S*.*$'
-    while n < 15
-        let line = getline(n)
-        if line =~ regline
-            call <SID>UpdateTitle()
-            call cursor(curline, curcol)
-            return
-        endif
-        let n = n + 1
-    endwhile
+    for n in range(1,14)
+      let line = getline(n)
+      if line =~ regline
+        call <SID>UpdateTitle()
+        call cursor(curline, curcol)
+        return
+      endif
+    endfor
 
     if a:add isnot 0
       call <SID>SetComment(0)
@@ -209,7 +207,12 @@ endfunction
 " ##### 不同文件添加不同头总调用函数
 function! <SID>AddTitle()
     let file_copyright_head_hase = 0
-    "如果文件类型为.sh文件
+    "如果文件类型为.vim文件
+    if &filetype == 'vim'
+        call Title_vim()
+        let file_copyright_head_hase = 1
+    endif
+
     if &filetype == 'sh'
         call Title_sh()
         let file_copyright_head_hase = 1
@@ -287,8 +290,21 @@ function! <SID>AddTitle()
 endfunc
 
 " ##### 具体实现函数
+func! Title_vim()
+  let choice = confirm("create a vim9script script?", "&y\n&n\n")
+  if choice == 1
+    cal setline(1, "vim9script")
+    let g:file_copyright_comment_prefix = "\#"
+    let g:file_copyright_comment_mid_prefix = "\#"
+    call <SID>SetComment(1)
+
+  else
+    call <SID>SetComment(0)
+  endif
+endfunc
+
 func! Title_sh()
-    call setline(1, "\#!/bin/bash")
+    call setline(1, "\#!/usr/bin/env bash")
     call <SID>SetComment(1)
 endfunc
 

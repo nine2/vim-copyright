@@ -61,7 +61,7 @@ let g:file_copyright_comment_prefix_map  = {
     \"python": "\#", "py":"\#",
     \"cpp":"/*", "c":"/*", "h":"/*", "hpp":"/*",
     \"go":"/*",
-    \"vim":"\"",
+    \"vim":"\"", "vim9script": "\#",
     \"sh":"\#", "shell":"\#",
 \}
 
@@ -69,7 +69,7 @@ let g:file_copyright_comment_mid_prefix_map = {
     \"python": "\#", "py":"\#",
     \"cpp":"\#", "c":"\#", "h":"\#", "hpp":"\#",
     \"go":"\#",
-    \"vim":"\"",
+    \"vim":"\"", "vim9script": "\#",
     \"sh":"\#", "shell":"\#",
 \}
 
